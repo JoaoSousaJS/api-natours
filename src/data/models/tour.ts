@@ -25,6 +25,7 @@ const TourSchema: Schema = new Schema({
     unique: true,
     trim: true
   },
+  slug: String,
   duration: {
     type: Number,
     required: [true, 'A tour must have a duration']
@@ -84,5 +85,15 @@ TourSchema.pre<ITourSchema>('save', function (next) {
   this.slug = slugify(this.name, { lower: true })
   next()
 })
+
+// TourSchema.pre<ITourSchema>('save', function (next) {
+//   console.log('Will save document...')
+//   next()
+// })
+
+// TourSchema.post('save', function (doc, next) {
+//   console.log(doc)
+//   next()
+// })
 
 export const TourModel = moongose.model('Tour', TourSchema)
