@@ -1,6 +1,24 @@
-import moongose from 'mongoose'
+import moongose, { Document, Schema } from 'mongoose'
+import slugify from 'slugify'
+export interface ITourSchema extends Document {
+  name: string
+  duration: Number
+  maxGroupSize: Number
+  difficulty: string
+  ratingsAverage: Number
+  ratingsQuantity: Number
+  price: Number
+  priceDiscount: Number
+  summary: string
+  description: string
+  imageCover: string
+  images: [string]
+  createdAt: Date
+  startDates: [Date]
+  slug: string
+}
 
-const tourSchema = new moongose.Schema({
+const TourSchema: Schema = new Schema({
   name: {
     type: String,
     required: [true, 'A tour must have a name'],
@@ -52,6 +70,19 @@ const tourSchema = new moongose.Schema({
     select: false
   },
   startDates: [Date]
+}, {
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
 })
 
-export const TourModel = moongose.model('Tour', tourSchema)
+TourSchema.virtual('durationWeeks').get(function () {
+  return this.duration / 7
+})
+
+// document middleware
+TourSchema.pre<ITourSchema>('save', function (next) {
+  this.slug = slugify(this.name, { lower: true })
+  next()
+})
+
+export const TourModel = moongose.model('Tour', TourSchema)
