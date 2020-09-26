@@ -13,7 +13,7 @@ export const createTour = async (req,res): Promise<void> => {
   } catch (err) {
     res.status(400).json({
       status: 'fail',
-      message: 'Invalid data sent'
+      message: err
     })
   }
 }

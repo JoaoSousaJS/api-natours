@@ -16,6 +16,8 @@ export interface ITourSchema extends Document {
   createdAt: Date
   startDates: [Date]
   slug: string
+  find: Function
+  start: Number
 }
 
 const TourSchema: Schema = new Schema({
@@ -23,7 +25,10 @@ const TourSchema: Schema = new Schema({
     type: String,
     required: [true, 'A tour must have a name'],
     unique: true,
-    trim: true
+    trim: true,
+    maxlength: [40, 'A tour name must have less or equal than 40 characters'],
+    minlength: [10, 'A tour name must have more or equal than 10 characters']
+    // validate: [validator.isAlpha, 'the name must contain only letters']
   },
   slug: String,
   duration: {
@@ -36,11 +41,18 @@ const TourSchema: Schema = new Schema({
   },
   difficulty: {
     type: String,
-    required: [true, 'A tour must have a difficulty']
+    required: [true, 'A tour must have a difficulty'],
+    enum: {
+      values: ['easy', 'medium', 'difficult'],
+      message: 'The difficulty must be easy, medium or difficult'
+    }
+
   },
   ratingsAverage: {
     type: Number,
-    default: 4.5
+    default: 4.5,
+    min: [1, 'A tour varange can not be lower than 1.0'],
+    max: [5, 'A tour average can not be higher than 5.0']
   },
   ratingsQuantity: {
     type: Number,
@@ -50,7 +62,16 @@ const TourSchema: Schema = new Schema({
     type: Number,
     required: [true,'A tour must have a price']
   },
-  priceDiscount: Number,
+  priceDiscount: {
+    type: Number,
+    validate: {
+      validator: function (val: Number) {
+        // this only points to current doc on New document creation
+        return val < this.price
+      },
+      message: 'The price discount ({VALUE}) can not be higher than regular price'
+    }
+  },
   summary: {
     type: String,
     trim: true,
@@ -70,7 +91,11 @@ const TourSchema: Schema = new Schema({
     default: Date.now(),
     select: false
   },
-  startDates: [Date]
+  startDates: [Date],
+  secretTour: {
+    type: Boolean,
+    default: false
+  }
 }, {
   toJSON: { virtuals: true },
   toObject: { virtuals: true }
@@ -80,7 +105,7 @@ TourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7
 })
 
-// document middleware
+// document middleware runs before .save() and .create()
 TourSchema.pre<ITourSchema>('save', function (next) {
   this.slug = slugify(this.name, { lower: true })
   next()
@@ -95,5 +120,25 @@ TourSchema.pre<ITourSchema>('save', function (next) {
 //   console.log(doc)
 //   next()
 // })
+
+// query middleware
+// TourSchema.pre<ITourSchema>('find', function (next) {
+TourSchema.pre<ITourSchema>(/^find/, function (next) {
+  this.find({ secretTour: { $ne: true } })
+  this.start = Date.now()
+  next()
+})
+
+TourSchema.post<ITourSchema>(/^find/, function (docs, next) {
+  console.log(`Query took ${Date.now() - this.start} milliseconds`)
+  next()
+})
+
+// agregation middleware
+TourSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } })
+  console.log(this.pipeline())
+  next()
+})
 
 export const TourModel = moongose.model('Tour', TourSchema)
