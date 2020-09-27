@@ -4,11 +4,6 @@ import { tourRouter } from './tour/tour-routes'
 import { AppError } from '../../presentation/errors/app-error'
 import { globalErrorHandler } from '../../presentation/errors/global-error-handler'
 
-interface ErrorStatus extends Error {
-  status: string
-  statusCode: Number
-}
-
 export const app = express()
 app.use(morgan('dev'))
 app.use(express.json())
