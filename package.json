@@ -35,6 +35,7 @@
   "scripts": {
     "start": "node dist/main/server.js",
     "debug": "ndb ts-node ./src/main/server.ts",
+    "debug:prod": "NODE_ENV=production nodemon",
     "build": "rimraf dist && tsc",
     "up": "npm run build && docker-compose up",
     "stop": "docker-compose down",
