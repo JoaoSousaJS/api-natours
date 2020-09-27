@@ -1,19 +1,13 @@
 import { TourModel } from '../../../data/models/tour'
+import { catchAsync } from '../../errors/catch-async-error'
 
-export const createTour = async (req,res): Promise<void> => {
-  try {
-    const newTour = await TourModel.create(req.body)
+export const createTour = catchAsync(async (req,res, next): Promise<void> => {
+  const newTour = await TourModel.create(req.body)
 
-    res.status(201).json({
-      status: 'success',
-      data: {
-        tour: newTour
-      }
-    })
-  } catch (err) {
-    res.status(400).json({
-      status: 'fail',
-      message: err
-    })
-  }
-}
+  res.status(201).json({
+    status: 'success',
+    data: {
+      tour: newTour
+    }
+  })
+})
