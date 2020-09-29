@@ -23,18 +23,17 @@ const UserSchema: Schema = new Schema({
     validate: [validator.isEmail, 'Please, provide a valid email']
   },
   photo: {
-    type: String,
-    required: [true, 'A User must have a photo']
+    type: String
   },
   password: {
     type: String,
     required: [true, 'A User must have a password'],
-    minlength: [6, 'The password must have more than 6 letters']
+    minlength: 8
   },
   passwordConfirmation: {
     type: String,
     required: [true, 'A User must have a password'],
-    minlength: [6, 'The password must have more than 6 letters']
+    minlength: 8
   }
 })
 
