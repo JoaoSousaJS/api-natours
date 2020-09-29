@@ -1,4 +1,4 @@
-import { TourModel } from '../../../../data/models/tour'
+import { TourModel } from '../../../../data/models/tour/tour'
 import { catchAsync } from '../../../errors/catch-async-error'
 
 export const getTourStats = catchAsync(async (req, res, next): Promise<void> => {

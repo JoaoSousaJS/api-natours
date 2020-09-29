@@ -1,4 +1,4 @@
-import { TourModel } from '../../../data/models/tour'
+import { TourModel } from '../../../data/models/tour/tour'
 import { APIFilter } from '../../../main/utils/api-filter'
 import { catchAsync } from '../../errors/catch-async-error'
 

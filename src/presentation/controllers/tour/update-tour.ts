@@ -1,4 +1,4 @@
-import { TourModel } from '../../../data/models/tour'
+import { TourModel } from '../../../data/models/tour/tour'
 import { AppError } from '../../errors/app-error'
 import { catchAsync } from '../../errors/catch-async-error'
 

@@ -2,7 +2,7 @@
 import mongoose from 'mongoose'
 import fs from 'fs'
 import 'dotenv/config'
-import { TourModel } from './models/tour'
+import { TourModel } from './models/tour/tour'
 
 const DB = process.env.DATABASE.replace('<PASSWORD>', process.env.DATABASE_PASSWORD)
 

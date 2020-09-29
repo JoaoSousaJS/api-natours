@@ -1,7 +1,13 @@
 import moongose from 'mongoose'
 import 'dotenv/config'
+
 import { app } from '../infra/routes/app'
 import { ProcessProtocol } from './protocols/process-protocol'
+
+process.on('uncaughtException', (err: ProcessProtocol) => {
+  console.log('UNCAUGHT REJECTION!!Shutting down...')
+  console.log(err.name, err.message)
+})
 
 const DB = process.env.DATABASE.replace('<PASSWORD>', process.env.DATABASE_PASSWORD)
 
@@ -22,8 +28,15 @@ const server = app.listen(port, () => {
 })
 
 process.on('unhandledRejection', (err: ProcessProtocol) => {
-  console.log(err.name, err.message)
   console.log('UNHANDLED REJECTION!!Shutting down...')
+  console.log(err.name, err.message)
+  server.close(() => {
+    process.exit(1)
+  })
+})
+process.on('uncaughtException', (err: ProcessProtocol) => {
+  console.log('UNCAUGHT REJECTION!!Shutting down...')
+  console.log(err.name, err.message)
   server.close(() => {
     process.exit(1)
   })
