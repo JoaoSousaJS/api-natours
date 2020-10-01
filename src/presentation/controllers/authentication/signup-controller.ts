@@ -1,7 +1,6 @@
 import { UserModel } from '../../../data/models/user/user'
 import { catchAsync } from '../../errors/catch-async-error'
-import jwt from 'jsonwebtoken'
-import 'dotenv/config'
+import { signInJwtHelper } from '../../helper/signin-helper'
 
 export const signUp = catchAsync(async (req, res, next) => {
   const { name, email, password, passwordConfirmation } = req.body
@@ -12,15 +11,16 @@ export const signUp = catchAsync(async (req, res, next) => {
     passwordConfirmation
   })
 
-  const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN
-  })
+  const token = signInJwtHelper(newUser._id)
 
   res.status(201).json({
     status: 'success',
     token,
     data: {
-      user: newUser
+      user: {
+        name,
+        email
+      }
     }
   })
 })

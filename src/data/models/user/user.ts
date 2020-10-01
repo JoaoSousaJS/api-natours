@@ -2,15 +2,16 @@ import mongoose, { Schema, Document } from 'mongoose'
 import validator from 'validator'
 import bcrypt from 'bcrypt'
 
-interface IUserSchema extends Document {
+export interface IUserSchema extends Document {
   name: string
   email: string
-  photo: string
+  photo?: string
   password: string
   passwordConfirmation: string
+  comparePassword: (candidatePassword: string, userPassword: string) => Promise<boolean>
 }
 
-const UserSchema: Schema = new Schema({
+export const UserSchema: Schema = new Schema({
   name: {
     type: String,
     required: [true, 'A User must have a name']
@@ -29,7 +30,8 @@ const UserSchema: Schema = new Schema({
   password: {
     type: String,
     required: [true, 'A User must have a password'],
-    minlength: 8
+    minlength: 8,
+    select: false
   },
   passwordConfirmation: {
     type: String,
@@ -51,4 +53,8 @@ UserSchema.pre<IUserSchema>('save', async function (next) {
   next()
 })
 
-export const UserModel = mongoose.model('User',UserSchema)
+UserSchema.methods.comparePassword = async function (candidatePassword, userPassword) {
+  return await bcrypt.compare(candidatePassword, userPassword)
+}
+
+export const UserModel = mongoose.model<IUserSchema>('User',UserSchema)
