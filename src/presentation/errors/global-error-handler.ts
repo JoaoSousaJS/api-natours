@@ -14,14 +14,22 @@ const handleDuplicateFieldDB = err => {
 
 const handleValidationErrorDB = err => {
   interface Validator {
-    properties: {
-      message: string
-    }
+    message: string
   }
-  const errors = Object.values<Validator>(err.errors).map(el => el.properties.message)
+  const errors = Object.values<Validator>(err.errors).map(el => el.message)
 
   const message = `Invalid input data. ${errors.join('. ')}`
   return new AppError(message, 400)
+}
+
+const handleJWTError = () => {
+  const message = 'Invalid token. Please login again'
+  return new AppError(message, 401)
+}
+
+const handleJWTExpiredError = () => {
+  const message = 'Your token has expired. Please login again'
+  return new AppError(message, 401)
 }
 
 const sendErrorDev = (err, res) => {
@@ -34,7 +42,7 @@ const sendErrorDev = (err, res) => {
 }
 
 const sendErrorProd = (err, res) => {
-  // Operationa, trusted error: send message to client
+  // Operationa, trusted error: send message  to client
   if (err.isOperational) {
     res.status(err.statusCode).json({
       status: err.status,
@@ -44,7 +52,7 @@ const sendErrorProd = (err, res) => {
   // programming or other unknown error: don't leak error detail
   } else {
     // 1 Log Error
-    console.error('ERROR', err)
+    console.error('ERROR**:', err)
 
     // 2 send generic message
 
@@ -62,10 +70,14 @@ export function globalErrorHandler (err, req, res, next) {
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, res)
   } else if (process.env.NODE_ENV === 'production') {
-    let error = { ...err }
+    let error = err
+
     if (error.kind === 'ObjectId') error = handleCastErrorDB(error)
     if (error.code === 11000) error = handleDuplicateFieldDB(error)
-    if (error.errors.name.name === 'ValidatorError') error = handleValidationErrorDB(error)
+    if (error.name === 'ValidationError') error = handleValidationErrorDB(error)
+    if (error.name === 'JsonWebTokenError') error = handleJWTError()
+    if (error.name === 'TokenExpiredError') error = handleJWTExpiredError()
+
     sendErrorProd(error, res)
   }
 }

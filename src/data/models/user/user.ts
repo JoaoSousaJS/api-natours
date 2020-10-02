@@ -8,7 +8,9 @@ export interface IUserSchema extends Document {
   photo?: string
   password: string
   passwordConfirmation: string
+  passwordChangedAt: string
   comparePassword: (candidatePassword: string, userPassword: string) => Promise<boolean>
+  changedPasswordAfter: (JWTTimeStamp: number) => Promise<boolean>
 }
 
 export const UserSchema: Schema = new Schema({
@@ -42,7 +44,8 @@ export const UserSchema: Schema = new Schema({
       },
       message: 'Passwords are not the same'
     }
-  }
+  },
+  passwordChangedAt: Date
 })
 
 UserSchema.pre<IUserSchema>('save', async function (next) {
@@ -55,6 +58,16 @@ UserSchema.pre<IUserSchema>('save', async function (next) {
 
 UserSchema.methods.comparePassword = async function (candidatePassword, userPassword) {
   return await bcrypt.compare(candidatePassword, userPassword)
+}
+
+UserSchema.methods.changedPasswordAfter = function (JWTTimeStamp) {
+  if (this.passwordChangedAt) {
+    const changedTimeStamp = this.passwordChangedAt.getTime() / 1000
+    return JWTTimeStamp < changedTimeStamp
+  }
+
+  // False means NOT changed
+  return false
 }
 
 export const UserModel = mongoose.model<IUserSchema>('User',UserSchema)
