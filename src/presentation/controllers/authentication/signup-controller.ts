@@ -3,11 +3,12 @@ import { catchAsync } from '../../errors/catch-async-error'
 import { signInJwtHelper } from '../../helper/signin-helper'
 
 export const signUp = catchAsync(async (req, res, next) => {
-  const { name, email, password, passwordConfirmation, passwordChangedAt } = req.body
+  const { name, email, password, passwordConfirmation, passwordChangedAt, role } = req.body
   const newUser = await UserModel.create({
     name,
     email,
     password,
+    role,
     passwordConfirmation,
     passwordChangedAt
   })
