@@ -6,6 +6,7 @@ export interface IUserSchema extends Document {
   name: string
   email: string
   photo?: string
+  role?: string
   password: string
   passwordConfirmation: string
   passwordChangedAt: string
@@ -28,6 +29,11 @@ export const UserSchema: Schema = new Schema({
   },
   photo: {
     type: String
+  },
+  role: {
+    type: String,
+    enum: ['user', 'guide', 'lead-guide', 'admin'],
+    default: 'user'
   },
   password: {
     type: String,
