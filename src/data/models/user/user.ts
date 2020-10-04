@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose'
 import validator from 'validator'
 import bcrypt from 'bcrypt'
+import { randomBytes, createHash } from 'crypto'
 
 export interface IUserSchema extends Document {
   name: string
@@ -10,8 +11,11 @@ export interface IUserSchema extends Document {
   password: string
   passwordConfirmation: string
   passwordChangedAt: string
+  passwordResetToken?: String
+  passwordResetExpires?: Date
   comparePassword: (candidatePassword: string, userPassword: string) => Promise<boolean>
   changedPasswordAfter: (JWTTimeStamp: number) => Promise<boolean>
+  createPasswordResetToken: () => string
 }
 
 export const UserSchema: Schema = new Schema({
@@ -51,7 +55,9 @@ export const UserSchema: Schema = new Schema({
       message: 'Passwords are not the same'
     }
   },
-  passwordChangedAt: Date
+  passwordChangedAt: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date
 })
 
 UserSchema.pre<IUserSchema>('save', async function (next) {
@@ -74,6 +80,16 @@ UserSchema.methods.changedPasswordAfter = function (JWTTimeStamp) {
 
   // False means NOT changed
   return false
+}
+
+UserSchema.methods.createPasswordResetToken = function () {
+  const resetToken = randomBytes(32).toString('hex')
+
+  this.passwordResetToken = createHash('sha256').update(resetToken).digest('hex')
+  console.log({ resetToken }, this.passwordResetToken)
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000
+
+  return resetToken
 }
 
 export const UserModel = mongoose.model<IUserSchema>('User',UserSchema)
