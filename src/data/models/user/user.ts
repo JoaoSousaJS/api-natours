@@ -10,9 +10,9 @@ export interface IUserSchema extends Document {
   role?: string
   password: string
   passwordConfirmation: string
-  passwordChangedAt: string
-  passwordResetToken?: String
-  passwordResetExpires?: Date
+  passwordChangedAt: number
+  passwordResetToken?: string
+  passwordResetExpires?: number
   comparePassword: (candidatePassword: string, userPassword: string) => Promise<boolean>
   changedPasswordAfter: (JWTTimeStamp: number) => Promise<boolean>
   createPasswordResetToken: () => string
@@ -58,6 +58,13 @@ export const UserSchema: Schema = new Schema({
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date
+})
+
+UserSchema.pre<IUserSchema>('save', async function (next) {
+  if (!this.isModified('password') || this.isNew) return next()
+
+  this.passwordChangedAt = Date.now() - 1000
+  next()
 })
 
 UserSchema.pre<IUserSchema>('save', async function (next) {
