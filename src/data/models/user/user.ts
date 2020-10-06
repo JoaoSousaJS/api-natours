@@ -13,6 +13,7 @@ export interface IUserSchema extends Document {
   passwordChangedAt: number
   passwordResetToken?: string
   passwordResetExpires?: number
+  find: Function
   comparePassword: (candidatePassword: string, userPassword: string) => Promise<boolean>
   changedPasswordAfter: (JWTTimeStamp: number) => Promise<boolean>
   createPasswordResetToken: () => string
@@ -57,13 +58,24 @@ export const UserSchema: Schema = new Schema({
   },
   passwordChangedAt: Date,
   passwordResetToken: String,
-  passwordResetExpires: Date
+  passwordResetExpires: Date,
+  active: {
+    type: Boolean,
+    default: true,
+    select: false
+  }
 })
 
 UserSchema.pre<IUserSchema>('save', async function (next) {
   if (!this.isModified('password') || this.isNew) return next()
 
   this.passwordChangedAt = Date.now() - 1000
+  next()
+})
+
+UserSchema.pre<IUserSchema>(/^find/, function (next) {
+  // this points to current query
+  this.find({ active: { $ne: false } })
   next()
 })
 
