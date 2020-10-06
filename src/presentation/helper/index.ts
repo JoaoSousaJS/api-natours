@@ -1,2 +1,2 @@
 export * from './promisify'
-export * from './signin-helper'
+export * from './authentication/signin-helper'

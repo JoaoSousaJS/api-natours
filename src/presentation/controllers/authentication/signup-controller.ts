@@ -1,6 +1,6 @@
 import { UserModel } from '../../../data/models/user/user'
 import { catchAsync } from '../../errors/catch-async-error'
-import { signInJwtHelper } from '../../helper/signin-helper'
+import { signInJwtHelper } from '../../helper/authentication/signin-helper'
 
 export const signUp = catchAsync(async (req, res, next) => {
   const { name, email, password, passwordConfirmation, passwordChangedAt, role } = req.body
