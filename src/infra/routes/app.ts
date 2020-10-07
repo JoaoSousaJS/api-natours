@@ -1,6 +1,7 @@
-import express from 'express'
+import express, { Request } from 'express'
 import morgan from 'morgan'
 import rateLimit from 'express-rate-limit'
+import helmet from 'helmet'
 import { tourRouter } from './tour/tour-routes'
 import { AppError } from '../../presentation/errors/app-error'
 import { globalErrorHandler } from '../../presentation/errors/global-error-handler'
@@ -8,21 +9,35 @@ import { userRouter } from './user/user-routes'
 
 export const app = express()
 
-app.use(express.json())
+// set security http headers
+app.use(helmet())
 
+// body parser
+app.use(express.json({
+  limit: '10kb'
+}))
+
+// development loggin
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'))
 }
 
+// limit requests from the same api
 const limiter = rateLimit({
   max: 100,
   windowMs: 60 * 60 * 1000,
   message: 'Too many request from this IP, please try again in an hour'
 })
 
-app.use('/api',limiter)
+app.use('/api', limiter)
 
-app.use((req, res, next) => {
+// Test middleware
+interface RequestTime extends Request {
+  requestTime: string
+}
+
+app.use((req: RequestTime, res, next) => {
+  req.requestTime = new Date().toISOString()
   // console.log(req.headers)
   next()
 })
