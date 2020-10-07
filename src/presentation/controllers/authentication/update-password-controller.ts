@@ -1,6 +1,6 @@
 import { UserModel } from '../../../data/models/user/user'
 import { AppError, catchAsync } from '../../errors'
-import { signInJwtHelper } from '../../helper'
+import { sendTokenWithoutField } from '../../helper/authentication/send-token-without-field-helper'
 
 export const updatePassword = catchAsync(async (req, res, next) => {
   const user = await UserModel.findById(req.user.id).select('+password')
@@ -17,10 +17,5 @@ export const updatePassword = catchAsync(async (req, res, next) => {
   user.passwordConfirmation = newPasswordConfirmation
   await user.save()
 
-  const token = signInJwtHelper(user._id)
-
-  res.status(200).json({
-    status: 'success',
-    token
-  })
+  sendTokenWithoutField(user, 200, res)
 })

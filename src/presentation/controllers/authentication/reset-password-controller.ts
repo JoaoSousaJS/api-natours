@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 import { UserModel } from '../../../data/models/user/user'
 import { AppError, catchAsync } from '../../errors'
-import { signInJwtHelper } from '../../helper'
+import { sendTokenWithoutField } from '../../helper/authentication/send-token-without-field-helper'
 
 export const resetPassword = catchAsync(async (req, res, next) => {
   const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex')
@@ -21,10 +21,5 @@ export const resetPassword = catchAsync(async (req, res, next) => {
   user.passwordResetExpires = undefined
   await user.save()
 
-  const token = signInJwtHelper(user._id)
-
-  res.status(200).json({
-    status: 'success',
-    token
-  })
+  sendTokenWithoutField(user, 200, res)
 })
