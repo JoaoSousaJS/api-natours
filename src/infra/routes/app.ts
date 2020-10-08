@@ -2,25 +2,15 @@ import express, { Request } from 'express'
 import morgan from 'morgan'
 import rateLimit from 'express-rate-limit'
 import helmet from 'helmet'
+import mongoSanitze from 'express-mongo-sanitize'
+import xss from 'xss-clean'
+
 import { tourRouter } from './tour/tour-routes'
 import { AppError } from '../../presentation/errors/app-error'
 import { globalErrorHandler } from '../../presentation/errors/global-error-handler'
 import { userRouter } from './user/user-routes'
 
 export const app = express()
-
-// set security http headers
-app.use(helmet())
-
-// body parser
-app.use(express.json({
-  limit: '10kb'
-}))
-
-// development loggin
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'))
-}
 
 // limit requests from the same api
 const limiter = rateLimit({
@@ -30,6 +20,25 @@ const limiter = rateLimit({
 })
 
 app.use('/api', limiter)
+
+// set security http headers
+app.use(helmet())
+
+// body parser
+app.use(express.json({
+  limit: '10kb'
+}))
+
+// data sanitization against nosql query injection
+app.use(mongoSanitze())
+
+// data sanitization against XSS
+app.use(xss())
+
+// development loggin
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'))
+}
 
 // Test middleware
 interface RequestTime extends Request {
