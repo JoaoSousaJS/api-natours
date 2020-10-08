@@ -4,6 +4,7 @@ import rateLimit from 'express-rate-limit'
 import helmet from 'helmet'
 import mongoSanitze from 'express-mongo-sanitize'
 import xss from 'xss-clean'
+import hpp from 'hpp'
 
 import { tourRouter } from './tour/tour-routes'
 import { AppError } from '../../presentation/errors/app-error'
@@ -34,6 +35,13 @@ app.use(mongoSanitze())
 
 // data sanitization against XSS
 app.use(xss())
+
+// prevent parameter polution
+app.use(hpp({
+  whitelist: [
+    'duration', 'ratingsQuantity', 'ratingsAverage', 'maxGroupSize', 'difficulty', 'price'
+  ]
+}))
 
 // development loggin
 if (process.env.NODE_ENV === 'development') {
