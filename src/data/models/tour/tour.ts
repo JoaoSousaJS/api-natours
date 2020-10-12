@@ -1,5 +1,6 @@
 import moongose, { Document, Schema } from 'mongoose'
 import slugify from 'slugify'
+import { UserModel } from '../user/user'
 export interface ITourSchema extends Document {
   name: string
   duration: Number
@@ -33,6 +34,7 @@ export interface ITourSchema extends Document {
       day: Number
     }
   ]
+  guides: object[]
 }
 
 const TourSchema: Schema = new Schema({
@@ -133,7 +135,8 @@ const TourSchema: Schema = new Schema({
       description: String,
       day: Number
     }
-  ]
+  ],
+  guides: Array
 }, {
   toJSON: { virtuals: true },
   toObject: { virtuals: true }
@@ -146,6 +149,12 @@ TourSchema.virtual('durationWeeks').get(function () {
 // document middleware runs before .save() and .create()
 TourSchema.pre<ITourSchema>('save', function (next) {
   this.slug = slugify(this.name, { lower: true })
+  next()
+})
+
+TourSchema.pre<ITourSchema>('save', async function (next) {
+  const guidesPromises = this.guides.map(async id => await UserModel.findById(id))
+  this.guides = await Promise.all(guidesPromises)
   next()
 })
 
