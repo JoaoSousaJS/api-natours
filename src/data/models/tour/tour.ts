@@ -3,13 +3,13 @@ import slugify from 'slugify'
 import { UserModel } from '../user/user'
 export interface ITourSchema extends Document {
   name: string
-  duration: Number
-  maxGroupSize: Number
+  duration: number
+  maxGroupSize: number
   difficulty: string
-  ratingsAverage: Number
-  ratingsQuantity: Number
-  price: Number
-  priceDiscount: Number
+  ratingsAverage: number
+  ratingsQuantity: number
+  price: number
+  priceDiscount: number
   summary: string
   description: string
   imageCover: string
@@ -18,20 +18,20 @@ export interface ITourSchema extends Document {
   startDates: [Date]
   slug: string
   find: Function
-  start: Number
+  start: number
   startLocation?: {
     type: string
-    coordinates: [Number]
+    coordinates: [number]
     address: string
     description: string
   }
   locations?: [
     {
       type: string
-      coordinates: [Number]
+      coordinates: [number]
       address: string
       description: string
-      day: Number
+      day: number
     }
   ]
   guides: object[]
