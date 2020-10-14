@@ -188,4 +188,4 @@ TourSchema.pre('aggregate', function (next) {
   next()
 })
 
-export const TourModel = moongose.model('Tour', TourSchema)
+export const TourModel = moongose.model<ITourSchema>('Tour', TourSchema)
