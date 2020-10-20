@@ -3,7 +3,7 @@ import { APIFilter } from '../../../main/utils/api-filter'
 import { catchAsync } from '../../errors'
 
 export const getAllReview = catchAsync(async (req, res, next) => {
-  const filter = new APIFilter(ReviewModel.find().populate('tour').populate('user'), req.query)
+  const filter = new APIFilter(ReviewModel.find(), req.query)
     .filter()
     .sort()
     .limitFields()
