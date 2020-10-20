@@ -145,6 +145,12 @@ const TourSchema: Schema = new Schema({
 TourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7
 })
+// Virtual populate
+TourSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour',
+  localField: '_id'
+})
 
 // document middleware runs before .save() and .create()
 TourSchema.pre<ITourSchema>('save', function (next) {

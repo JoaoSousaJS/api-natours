@@ -3,7 +3,7 @@ import { AppError } from '../../errors/app-error'
 import { catchAsync } from '../../errors/catch-async-error'
 
 export const getTour = catchAsync(async (req, res, next): Promise<void> => {
-  const tour = await TourModel.findById(req.params.id)
+  const tour = await TourModel.findById(req.params.id).populate('reviews')
 
   console.log(tour)
 
