@@ -1,15 +1,11 @@
 import { ReviewModel } from '../../../data/models/review/review'
-import { APIFilter } from '../../../main/utils/api-filter'
 import { catchAsync } from '../../errors'
 
 export const getAllReview = catchAsync(async (req, res, next) => {
-  const filter = new APIFilter(ReviewModel.find(), req.query)
-    .filter()
-    .sort()
-    .limitFields()
-    .paginate()
+  let filter = {}
+  if (req.params.tourId) filter = { tour: req.params.tourId }
 
-  const review = await filter.query
+  const review = await ReviewModel.find(filter)
 
   res.status(200).json({
     status: 'success',
