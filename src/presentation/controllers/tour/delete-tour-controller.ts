@@ -1,16 +1,17 @@
 import { TourModel } from '../../../data/models/tour/tour'
-import { AppError } from '../../errors/app-error'
-import { catchAsync } from '../../errors/catch-async-error'
+import { deleteOne } from '../../factory/delete-one-factory'
 
-export const deleteTour = catchAsync(async (req,res, next): Promise<void> => {
-  const tour = await TourModel.findByIdAndDelete(req.params.id)
+export const deleteTour = deleteOne(TourModel)
 
-  if (!tour) {
-    return next(new AppError('No tour found with that ID', 404))
-  }
+// export const deleteTour = catchAsync(async (req,res, next): Promise<void> => {
+//   const tour = await TourModel.findByIdAndDelete(req.params.id)
 
-  res.status(200).json({
-    status: 'success',
-    message: 'Tour deleted sucessfully'
-  })
-})
+//   if (!tour) {
+//     return next(new AppError('No tour found with that ID', 404))
+//   }
+
+//   res.status(200).json({
+//     status: 'success',
+//     message: 'Tour deleted sucessfully'
+//   })
+// })
