@@ -3,8 +3,9 @@ import mongoose, { Document, Schema } from 'mongoose'
 export interface IRevirewSchema extends Document {
   review: string
   rating: number
-  createdAt: Date
-
+  createdAt?: Date
+  tour: string
+  user: string
 }
 
 const ReviewSchema: Schema = new Schema({
@@ -34,7 +35,8 @@ const ReviewSchema: Schema = new Schema({
     ref: 'User',
     required: [true, 'Review must belong to a user']
   }
-},{
+},
+{
   toJSON: { virtuals: true },
   toObject: { virtuals: true }
 })

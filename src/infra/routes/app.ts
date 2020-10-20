@@ -10,6 +10,7 @@ import { tourRouter } from './tour/tour-routes'
 import { AppError } from '../../presentation/errors/app-error'
 import { globalErrorHandler } from '../../presentation/errors/global-error-handler'
 import { userRouter } from './user/user-routes'
+import { reviewRouter } from './review/review-routes'
 
 export const app = express()
 
@@ -61,6 +62,7 @@ app.use((req: RequestTime, res, next) => {
 
 app.use('/api/v1/tours', tourRouter)
 app.use('/api/v1/users', userRouter)
+app.use('/api/v1/reviews', reviewRouter)
 
 app.all('*', (req, res, next) => {
   // const err = new Error(`Can't find ${req.originalUrl} on this server`) as ErrorStatus
