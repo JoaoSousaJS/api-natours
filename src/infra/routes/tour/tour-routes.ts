@@ -1,9 +1,11 @@
 import express from 'express'
 import { getAllTours, getTour, deleteTour, updateTour, createTour, getTourStats, getMonthlyPlan } from '../../../presentation/controllers/tour/index'
 import { aliasTopTours, protectRoutes, restrictTo } from '../../../main/middlewares/'
-import { createReview } from '../../../presentation/controllers/review/add-review-controller'
+import { reviewRouter } from '../review/review-routes'
 
 export const tourRouter = express.Router()
+
+tourRouter.use('/:tourId/reviews', reviewRouter)
 
 tourRouter.route('/top-5-cheap').get(aliasTopTours, getAllTours)
 tourRouter.route('/tour-stats').get(getTourStats)
@@ -16,4 +18,4 @@ tourRouter.route('/:id')
 
 tourRouter.route('/').get(protectRoutes, getAllTours).post(createTour)
 
-tourRouter.route('/:tourId/reviews').post(protectRoutes, restrictTo('user'), createReview)
+// tourRouter.route('/:tourId/reviews').post(protectRoutes, restrictTo('user'), createReview)
