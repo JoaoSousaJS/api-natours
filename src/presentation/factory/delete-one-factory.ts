@@ -2,7 +2,7 @@
 import { AppError, catchAsync } from '../errors'
 
 export const deleteOne = (Model): any => {
-  catchAsync(async (req,res, next): Promise<void> => {
+  return catchAsync(async (req,res, next): Promise<void> => {
     const doc = await Model.findByIdAndDelete(req.params.id)
 
     if (!doc) {

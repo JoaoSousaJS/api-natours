@@ -1,7 +1,7 @@
 import { AppError, catchAsync } from '../errors'
 
 export const updateOne = (Model): any => {
-  catchAsync(async (req,res, next): Promise<void> => {
+  return catchAsync(async (req,res, next): Promise<void> => {
     const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true
