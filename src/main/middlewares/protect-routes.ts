@@ -13,7 +13,7 @@ export const protectRoutes = catchAsync(async (req, res, next) => {
     exp?: number
   }
 
-  let token
+  let token: string
   if (req.headers.authorization) {
     if (req.headers.authorization.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1]

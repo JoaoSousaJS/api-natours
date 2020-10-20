@@ -1,6 +1,7 @@
 import express from 'express'
 import { getAllTours, getTour, deleteTour, updateTour, createTour, getTourStats, getMonthlyPlan } from '../../../presentation/controllers/tour/index'
 import { aliasTopTours, protectRoutes, restrictTo } from '../../../main/middlewares/'
+import { createReview } from '../../../presentation/controllers/review/add-review-controller'
 
 export const tourRouter = express.Router()
 
@@ -14,3 +15,5 @@ tourRouter.route('/:id')
   .delete(protectRoutes, restrictTo('admin', 'lead-guide'), deleteTour)
 
 tourRouter.route('/').get(protectRoutes, getAllTours).post(createTour)
+
+tourRouter.route('/:tourId/reviews').post(protectRoutes, restrictTo('user'), createReview)

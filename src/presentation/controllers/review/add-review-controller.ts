@@ -2,12 +2,19 @@ import { ReviewModel } from '../../../data/models/review/review'
 import { catchAsync } from '../../errors'
 
 export const createReview = catchAsync(async (req, res, next) => {
-  const { review, rating, tour, user } = req.body
+  // allow nested routes
+  if (!req.body.tour) req.body.tour = req.params.tourId
+  if (!req.body.user) req.body.user = req.user.id
+
+  const { user } = req.body
+  const { tour } = req.body
+
+  const { review, rating } = req.body
   await ReviewModel.create({
     review,
     rating,
-    tour,
-    user
+    user,
+    tour
   })
 
   res.status(201).json({
