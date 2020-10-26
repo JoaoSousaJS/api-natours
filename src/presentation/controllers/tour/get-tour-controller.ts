@@ -1,20 +1,4 @@
 import { TourModel } from '../../../data/models/tour/tour'
-import { AppError } from '../../errors/app-error'
-import { catchAsync } from '../../errors/catch-async-error'
+import { getOne } from '../../factory/get-one-factory'
 
-export const getTour = catchAsync(async (req, res, next): Promise<void> => {
-  const tour = await TourModel.findById(req.params.id).populate('reviews')
-
-  console.log(tour)
-
-  if (!tour) {
-    return next(new AppError('No tour found with that ID', 404))
-  }
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour
-    }
-  })
-})
+export const getTour = getOne(TourModel, 'reviews')
