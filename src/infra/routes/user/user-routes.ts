@@ -1,7 +1,7 @@
 import express from 'express'
 import { protectRoutes } from '../../../main/middlewares'
 import { signUp, signIn, forgotPassword, resetPassword, updatePassword } from '../../../presentation/controllers/authentication/index'
-import { deleteMe, deleteUser, getAllUsers, updateMe, updateUser } from '../../../presentation/controllers/user/index'
+import { deleteMe, deleteUser, getAllUsers, getUser, updateMe, updateUser } from '../../../presentation/controllers/user/index'
 
 export const userRouter = express.Router()
 
@@ -13,4 +13,4 @@ userRouter.route('/update-password').patch(protectRoutes, updatePassword)
 userRouter.get('/', getAllUsers)
 userRouter.patch('/update-me',protectRoutes, updateMe)
 userRouter.delete('/delete-me',protectRoutes, deleteMe)
-userRouter.route('/:id').delete(deleteUser).patch(updateUser)
+userRouter.route('/:id').delete(deleteUser).patch(updateUser).get(getUser)

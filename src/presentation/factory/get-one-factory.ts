@@ -1,6 +1,6 @@
 import { AppError, catchAsync } from '../errors'
 
-export const getOne = (Model, popOptions): any => {
+export const getOne = (Model, popOptions?): any => {
   return catchAsync(async (req, res, next): Promise<void> => {
     let query = Model.findById(req.params.id)
     if (popOptions) query = query.populate(popOptions)
