@@ -9,4 +9,4 @@ export const reviewRouter = express.Router({
 reviewRouter.use(protectRoutes)
 
 reviewRouter.route('/').post(restrictTo('user'), setToursIds, createReview).get(getAllReview)
-reviewRouter.route('/:id').delete(deleteReview).patch(updateReview).get(getReview)
+reviewRouter.route('/:id').delete(restrictTo('user', 'admin'),deleteReview).patch(restrictTo('user', 'admin'),updateReview).get(getReview)
