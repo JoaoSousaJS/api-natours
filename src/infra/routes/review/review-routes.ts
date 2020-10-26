@@ -6,5 +6,7 @@ export const reviewRouter = express.Router({
   mergeParams: true
 })
 
-reviewRouter.route('/').post(protectRoutes, restrictTo('user'), setToursIds, createReview).get(getAllReview)
-reviewRouter.route('/:id').delete(protectRoutes, deleteReview).patch(protectRoutes, updateReview).get(getReview)
+reviewRouter.use(protectRoutes)
+
+reviewRouter.route('/').post(restrictTo('user'), setToursIds, createReview).get(getAllReview)
+reviewRouter.route('/:id').delete(deleteReview).patch(updateReview).get(getReview)
