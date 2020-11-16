@@ -9,7 +9,8 @@ export interface IRevirewSchema extends Document {
   user: string
   calcAverageRatings: Function
   aggregate: Function
-
+  findOne: Function
+  r: {}
 }
 
 const ReviewSchema: Schema = new Schema({
@@ -83,6 +84,16 @@ ReviewSchema.statics.calcAverageRatings = async function (tourId: string) {
 
 ReviewSchema.post('save', function () {
   this.constructor.calcAverageRatings(this.tour)
+})
+
+ReviewSchema.pre<IRevirewSchema>(/^findOneAnd/, async function (next) {
+  this.r = await this.findOne()
+  console.log(this.r)
+  next()
+})
+
+ReviewSchema.post(/^findOneAnd/, async function () {
+  await this.r.constructor.calcAverageRatings(this.r.tour)
 })
 
 export const ReviewModel = mongoose.model<IRevirewSchema>('Review', ReviewSchema)
