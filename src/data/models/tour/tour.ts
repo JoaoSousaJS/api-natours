@@ -69,7 +69,8 @@ const TourSchema: Schema = new Schema({
     type: Number,
     default: 4.5,
     min: [1, 'A tour varange can not be lower than 1.0'],
-    max: [5, 'A tour average can not be higher than 5.0']
+    max: [5, 'A tour average can not be higher than 5.0'],
+    set: (val: number) => Math.round(val * 10) / 10
   },
   ratingsQuantity: {
     type: Number,
