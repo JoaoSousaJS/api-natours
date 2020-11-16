@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema } from 'mongoose'
+import { TourModel } from '../tour/tour'
 
 export interface IRevirewSchema extends Document {
   review: string
@@ -6,6 +7,9 @@ export interface IRevirewSchema extends Document {
   createdAt?: Date
   tour: string
   user: string
+  calcAverageRatings: Function
+  aggregate: Function
+
 }
 
 const ReviewSchema: Schema = new Schema({
@@ -56,6 +60,30 @@ ReviewSchema.pre<IRevirewSchema>(/^find/, function (next) {
   })
 
   next()
+})
+
+ReviewSchema.statics.calcAverageRatings = async function (tourId: string) {
+  const stats = await this.aggregate([
+    {
+      $match: { tour: tourId }
+    },
+    {
+      $group: {
+        _id: '$tour',
+        nRating: { $sum: 1 },
+        avgRating: { $avg: '$rating' }
+      }
+    }
+  ])
+  console.log(stats)
+  await TourModel.findByIdAndUpdate(tourId, {
+    ratingsAverage: stats[0].nRating,
+    ratingsQuantity: stats[0].avgRating
+  })
+}
+
+ReviewSchema.post('save', function () {
+  this.constructor.calcAverageRatings(this.tour)
 })
 
 export const ReviewModel = mongoose.model<IRevirewSchema>('Review', ReviewSchema)
