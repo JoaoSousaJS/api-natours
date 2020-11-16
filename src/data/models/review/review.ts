@@ -46,6 +46,8 @@ const ReviewSchema: Schema = new Schema({
   toObject: { virtuals: true }
 })
 
+ReviewSchema.index({ tour: 1, user: 1 }, { unique: true })
+
 ReviewSchema.pre<IRevirewSchema>(/^find/, function (next) {
   // this.populate({
   //   path: 'tour',
