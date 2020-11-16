@@ -76,10 +76,17 @@ ReviewSchema.statics.calcAverageRatings = async function (tourId: string) {
       }
     }
   ])
-  await TourModel.findByIdAndUpdate(tourId, {
-    ratingsAverage: stats[0].nRating,
-    ratingsQuantity: stats[0].avgRating
-  })
+  if (stats.length > 0) {
+    await TourModel.findByIdAndUpdate(tourId, {
+      ratingsAverage: stats[0].nRating,
+      ratingsQuantity: stats[0].avgRating
+    })
+  } else {
+    await TourModel.findByIdAndUpdate(tourId, {
+      ratingsAverage: 0,
+      ratingsQuantity: 4.5
+    })
+  }
 }
 
 ReviewSchema.post('save', function () {
