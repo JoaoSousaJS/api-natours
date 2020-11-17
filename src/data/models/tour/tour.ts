@@ -194,10 +194,10 @@ TourSchema.post<ITourSchema>(/^find/, function (docs, next) {
 })
 
 // agregation middleware
-TourSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } })
-  console.log(this.pipeline())
-  next()
-})
+// TourSchema.pre('aggregate', function (next) {
+//   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } })
+//   console.log(this.pipeline())
+//   next()
+// })
 
 export const TourModel = moongose.model<ITourSchema>('Tour', TourSchema)

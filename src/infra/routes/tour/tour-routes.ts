@@ -1,5 +1,5 @@
 import express from 'express'
-import { getAllTours, getTour, deleteTour, updateTour, createTour, getTourStats, getMonthlyPlan, getToursWithin } from '../../../presentation/controllers/tour/index'
+import { getAllTours, getTour, deleteTour, updateTour, createTour, getTourStats, getMonthlyPlan, getToursWithin, getDistances } from '../../../presentation/controllers/tour/index'
 import { aliasTopTours, protectRoutes, restrictTo } from '../../../main/middlewares/'
 import { reviewRouter } from '../review/review-routes'
 
@@ -12,6 +12,7 @@ tourRouter.route('/tour-stats').get(getTourStats)
 tourRouter.route('/monthly-plan/:year').get(protectRoutes, restrictTo('admin', 'lead-guide', 'guide'), getMonthlyPlan)
 
 tourRouter.route('/tours-within/:distance/center/:latlng/unit/:unit').get(getToursWithin)
+tourRouter.route('/distances/:latlng/unit/:unit').get(getDistances)
 
 tourRouter.route('/:id')
   .get(getTour)

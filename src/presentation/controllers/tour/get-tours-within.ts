@@ -1,12 +1,7 @@
 import { NextFunction, Response } from 'express'
 import { TourModel } from '../../../data/models/tour/tour'
 import { AppError, catchAsync } from '../../errors'
-
-interface IGeoData {
-  distance: number
-  latlng: string
-  unit: string
-}
+import { IGeoData } from '../interface/geo-interface'
 
 export const getToursWithin = catchAsync(async (req, res: Response, next: NextFunction) => {
   const { distance, latlng, unit }: IGeoData = req.params
